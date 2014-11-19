@@ -1,3 +1,5 @@
+This reposistory is a git fork of OpenNERO for personal/coursework development.
+
 OpenNERO (c) 2006-2011 The University of Texas at Austin
 All rights reserved.
 Refer to COPYING.txt for detailed license information.
