@@ -103,32 +103,32 @@ class NeroModule:
             type=constants.OBJECT_TYPE_OBSTACLE)
 
         # Add an obstacle wall in the middle
-        common.addObject(
-            "data/shapes/cube/Cube.xml",
-            OpenNero.Vector3f(constants.XDIM/2, constants.YDIM/2, height),
-            OpenNero.Vector3f(0, 0, 90),
-            scale=OpenNero.Vector3f(constants.WIDTH, constants.YDIM / 4, constants.HEIGHT*2),
-            label="World Wall4",
-            type=constants.OBJECT_TYPE_OBSTACLE)
-
-        # Add some trees
-        for i in (0.25, 0.75):
-            for j in (0.25, 0.75):
-                # don't collide with trees - they are over 500 triangles each
-                common.addObject(
-                    "data/shapes/tree/Tree.xml",
-                    OpenNero.Vector3f(i * constants.XDIM, j * constants.YDIM, constants.OFFSET),
-                    OpenNero.Vector3f(0, 0, 0),
-                    scale=OpenNero.Vector3f(1, 1, 1),
-                    label="Tree %d %d" % (10 * i, 10 * j),
-                    type=constants.OBJECT_TYPE_LEVEL_GEOM)
-                # collide with their trunks represented with cubes instead
-                common.addObject(
-                    "data/shapes/cube/Cube.xml",
-                    OpenNero.Vector3f(i * constants.XDIM, j * constants.YDIM, constants.OFFSET),
-                    OpenNero.Vector3f(0,0,0),
-                    scale=OpenNero.Vector3f(1,1,constants.HEIGHT),
-                    type=constants.OBJECT_TYPE_OBSTACLE)
+#        common.addObject(
+#            "data/shapes/cube/Cube.xml",
+#            OpenNero.Vector3f(constants.XDIM/2, constants.YDIM/2, height),
+#            OpenNero.Vector3f(0, 0, 90),
+#            scale=OpenNero.Vector3f(constants.WIDTH, constants.YDIM / 4, constants.HEIGHT*2),
+#            label="World Wall4",
+#            type=constants.OBJECT_TYPE_OBSTACLE)
+#
+#        # Add some trees
+#        for i in (0.25, 0.75):
+#            for j in (0.25, 0.75):
+#                # don't collide with trees - they are over 500 triangles each
+#                common.addObject(
+#                    "data/shapes/tree/Tree.xml",
+#                    OpenNero.Vector3f(i * constants.XDIM, j * constants.YDIM, constants.OFFSET),
+#                    OpenNero.Vector3f(0, 0, 0),
+#                    scale=OpenNero.Vector3f(1, 1, 1),
+#                    label="Tree %d %d" % (10 * i, 10 * j),
+#                    type=constants.OBJECT_TYPE_LEVEL_GEOM)
+#                # collide with their trunks represented with cubes instead
+#                common.addObject(
+#                    "data/shapes/cube/Cube.xml",
+#                    OpenNero.Vector3f(i * constants.XDIM, j * constants.YDIM, constants.OFFSET),
+#                    OpenNero.Vector3f(0,0,0),
+#                    scale=OpenNero.Vector3f(1,1,constants.HEIGHT),
+#                    type=constants.OBJECT_TYPE_OBSTACLE)
 
         # Add the surrounding Environment
         common.addObject(

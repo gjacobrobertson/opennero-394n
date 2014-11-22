@@ -7,6 +7,8 @@ import common
 import common.menu_utils
 import OpenNero
 
+import random
+import math
 import threading
 
 def ModMain(mode = ""):
@@ -29,8 +31,9 @@ def StartEvolving():
 
 def TrainFlag(ai):
     mod = NERO.module.getMod()
+    mod.set_weight("FITNESS_APPROACH_FLAG", 200)
     update_flag(mod)
-    mod.deploy('ai')
+    mod.deploy(ai)
 
 def random_offset(min_dist, max_dist):
     angle = random.random() * 2 * math.pi
@@ -40,7 +43,7 @@ def random_offset(min_dist, max_dist):
     return (x_offset, y_offset)
 
 def update_flag(mod):
-    threading.Timer(5.0, update_flag, mod).start()
+    threading.Timer(60.0, update_flag, [mod]).start()
     x_offset, y_offset = random_offset(20, 150)
     x = mod.spawn_x[constants.OBJECT_TYPE_TEAM_0] + x_offset
     y = mod.spawn_y[constants.OBJECT_TYPE_TEAM_0] + y_offset
