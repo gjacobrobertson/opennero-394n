@@ -19,3 +19,5 @@ java/OpenNERO/target
 *.cmake
 doxy.config
 dist
+.cproject
+.project
