@@ -35,6 +35,7 @@ namespace OpenNero
 
     /// An interface for the RTNEAT learning algorithm
     class RTNEAT : public AI {
+    protected:
         PopulationPtr mPopulation;        ///< population of organisms
         queue<PyOrganismPtr> mWaitingBrainList; ///< queue of organisms to be evaluated
         vector<PyOrganismPtr> mBrainList; ///< all the organisms along with their stats
@@ -136,7 +137,7 @@ namespace OpenNero
         /// load info about this AI from the object template
         bool LoadFromTemplate( ObjectTemplatePtr objTemplate, const SimEntityData& data) { return true; }
 
-	private:
+	protected:
 
         /// tally the rewards of all the fielded agents
         void tallyAll();

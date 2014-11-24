@@ -31,22 +31,9 @@ namespace OpenNero
 
     /// An interface for the RTNEAT learning algorithm
     class NEATQ : public RTNEAT {
-
-	private:
-
-        /// tally the rewards of all the fielded agents
-        void tallyAll();
-
-		/// evaluate all brains by compiling their stats
-		void evaluateAll();
-
-		/// evolution step that potentially replaces an organism with an
-		/// offspring
-		void evolveAll();
-
-		/// Delete the unit which is currently associated with the specified
-		/// brain and move the brain back to waiting list.
-		void deleteUnit(PyOrganismPtr brain);
+    public:
+    	/// Called every step by the OpenNERO system
+    	virtual void ProcessTick( float32_t incAmt );
     };
 
 }
