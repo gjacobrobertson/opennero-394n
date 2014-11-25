@@ -55,7 +55,6 @@ def train_flag_tick(dt):
     flag_ticks += 1
     stats_ticks += 1
     mod = NERO.module.getMod()
-    print "train_flag_tick", dt
     if flag_ticks % FLAG_INTERVAL == 0:
         update_flag(mod)
         flag_ticks = 0
