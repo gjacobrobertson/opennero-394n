@@ -169,6 +169,8 @@ class NeroModule:
         OpenNero.disable_ai()
         if ai == 'rtneat':
             OpenNero.set_ai('rtneat-%s' % team, None)
+        if ai == 'rtneatq':
+            OpenNero.set_ai('rtneatq-%s' % team, None)
         self.environment.remove_all_agents(team)
         for _ in range(constants.pop_size):
             self.spawnAgent(ai=ai, team=team)
@@ -353,8 +355,10 @@ class NeroModule:
         if not self.environment:
             return
 
-        if ai == 'rtneat' and not OpenNero.get_ai('rtneat-%s' % team):
+        if ai == 'rtneat'  and not OpenNero.get_ai('rtneat-%s' % team):
             self.start_rtneat(team)
+        if ai == 'rtneatq'  and not OpenNero.get_ai('rtneatq-%s' % team):
+            self.start_rtneatq(team)
 
         self.curr_team = team
         color = constants.TEAM_LABELS[team]
@@ -402,6 +406,25 @@ class NeroModule:
 
         rtneat.set_lifetime(self.environment.lifetime)
 
+    def start_rtneatq(self, team=constants.OBJECT_TYPE_TEAM_0):
+        # initialize the rtNEAT+Q algorithm parameters
+        # input layer has enough nodes for all the observations plus a bias
+        # output layer has enough values for all the wires
+        # population size matches ours
+        # 1.0 is the weight initialization noise
+        rtneatq = OpenNero.RTNEAT("data/ai/neat-params.dat",
+                                 constants.N_SENSORS+1,
+                                 constants.N_ACTION_CANDIDATES * (constants.N_ACTIONS + 1),
+                                 constants.pop_size,
+                                 1.0,
+                                 rtneat_rewards(), 
+                                 False)
+
+        key = "rtneatq-%s" % team
+        OpenNero.set_ai(key, rtneatq)
+        print "get_ai(%s): %s" % (key, OpenNero.get_ai(key))
+
+        rtneatq.set_lifetime(self.environment.lifetime)
 
 gMod = None
 

@@ -35,6 +35,7 @@ class NeroAgent(object):
         return sbound, abound, module.rtneat_rewards()
 
     def initialize(self, init_info):
+        print "INITIALIZE"
         self.actions = init_info.actions
         self.sensors = init_info.sensors
         return True
@@ -180,7 +181,7 @@ class RTNEATAgent(NeroAgent, OpenNero.AgentBrain):
         """
         Returns the rtNEAT object for this agent
         """
-        return OpenNero.get_ai("rtneat-%s" % self.get_team()).get_organism(self)
+        return OpenNero.get_ai("%s-%s" % (self.ai, self.get_team())).get_organism(self)
 
     def start(self, time, sensors):
         """
@@ -210,7 +211,7 @@ class RTNEATAgent(NeroAgent, OpenNero.AgentBrain):
         """
         end of an episode
         """
-        OpenNero.get_ai("rtneat-%s" % self.get_team()).release_organism(self)
+        OpenNero.get_ai("%s-%s" % (self.ai, self.get_team())).release_organism(self)
         return True
 
     def stats(self):
@@ -399,6 +400,124 @@ class RTNEATAgent(NeroAgent, OpenNero.AgentBrain):
             i += 1
 
         self.org.update_genotype()
+
+
+class RTNEATQAgent(RTNEATAgent):
+    """
+    rtNEAT+Q Agent
+    """
+
+    ai = "rtneatq"
+
+    def __init__(self, gamma=0.8, epsilon=0.1):
+        self.previous_sensors = None
+        self.previous_candidate = None
+        self.epsilon = epsilon
+        self.gamma = gamma
+        return super(RTNEATQAgent, self).__init__()
+
+    def initialize(self, init_info):
+        super(RTNEATQAgent, self).initialize(init_info)
+        self.rewards = init_info.reward
+        return True
+
+    def act(self, time, sensors, reward):
+        org = self.get_org()
+        org.time_alive += 1
+        outputs = self.activate_network(org, sensors)
+        next_candidate = 0
+        if random.random < self.epsilon:
+            next_candidate = random.randrange(constants.N_ACTION_CANDIDATES)
+        else:
+            next_candidate = self.greedy_candidate(outputs)
+        next_actions = self.get_actions(outputs, next_candidate)
+        if self.previous_sensors is not None:
+            self.train_network(org, reward)
+        self.previous_sensors = sensors
+        self.previous_candidate = next_candidate
+        return self.interpret_actions(next_actions)
+
+    def activate_network(self, org, sensors):
+        if self.omit_friend_sensors:
+            for idx in constants.SENSOR_INDEX_FRIEND_RADAR:
+                sensors[idx] = 0
+        
+        org.net.load_sensors(
+            list(self.sensors.normalize(sensors)) + [constants.NEAT_BIAS])
+        org.net.activate()
+        return org.net.get_outputs()
+
+    def greedy_candidate(self, outputs):
+        candidate = 0
+        q_max = self.get_q(outputs, candidate)
+
+        for i in range(constants.N_ACTION_CANDIDATES):
+            if self.get_q(outputs, i) > q_max:
+                candidate = i
+                q_max = self.get_q(outputs, i)
+
+        return candidate
+
+    def get_q(self, outputs, candidate):
+        return outputs[self.get_q_index(candidate)]
+
+    def get_q_index(self, candidate):
+        return candidate - constants.N_ACTION_CANDIDATES
+
+    def get_actions(self, outputs, candidate):
+        start = candidate * constants.N_ACTIONS
+        end = start + constants.N_ACTIONS
+        action_outputs = outputs[start:end]
+        actions = self.actions.get_instance()
+        for i in range(len(actions)):
+            actions[i] = action_outputs[i]
+        return actions
+
+    def train_network(self, org, reward):
+        normalized_reward = self.normalize_reward(reward)
+        outputs = org.net.get_outputs()
+        q_max = max([self.get_q(outputs, i) for i in range(constants.N_ACTION_CANDIDATES)])
+        target = normalized_reward + self.gamma * q_max
+
+        previous_outputs = self.activate_network(org, self.previous_sensors)
+        q_index = self.get_q_index(self.previous_candidate)
+        previous_q = previous_outputs[q_index]
+        errors = [0 for i in range(len(outputs))]
+        errors[q_index] = target - previous_q
+        org.net.load_errors(errors)
+        org.net.backprop()
+
+    def interpret_actions(self, actions):
+        denormalized_actions = self.actions.denormalize(actions)
+
+        if denormalized_actions[constants.ACTION_INDEX_ZERO_FRIEND_SENSORS] > 0.5:
+            self.omit_friend_sensors = True
+        else:
+            self.omit_friend_sensors = False
+
+        return denormalized_actions
+
+    def normalize_reward(self, reward):
+        """
+        Combine reward vector into a single value in the range [0,1]
+        """
+        weighted_sum = 0
+        min_sum = 0
+        max_sum = 0
+        environment = OpenNero.get_environment()
+        for i, f in enumerate(constants.FITNESS_DIMENSIONS):
+            scale = constants.FITNESS_SCALE.get(f, 1.0) / 2.0
+            shift = 1.0
+            weight = environment.reward_weights[f]
+            normalized_component = reward[i] / scale + shift
+            weighted_sum += weight * normalized_component
+            min_sum += abs(weight) * -1.0
+            max_sum += abs(weight)
+        normalized_reward = weighted_sum
+        if max_sum > min_sum: #Normalize weighted sum to [0, 1]
+            d = max_sum - min_sum
+            normalized_reward = (normalized_reward - min_sum) / d
+        return normalized_reward
 
 
 class Turret(NeroAgent, OpenNero.AgentBrain):

@@ -325,6 +325,8 @@ namespace OpenNero {
 			py::class_<PyNetwork, PyNetworkPtr>("Network", "an artificial neural network", no_init )
 				.def("load_sensors", &PyNetwork::load_sensors, "load sensor values into the network")
 				.def("activate", &PyNetwork::activate, "activate the network for one or more steps until signal reaches output")
+				.def("load_errors", &PyNetwork::load_errors, "load error values into the network")
+				.def("backprop", &PyNetwork::backprop, "backpropagate errors through the network")
 				.def("flush", &PyNetwork::flush, "flush the network by clearing its internal state")
 				.def("get_outputs", &PyNetwork::get_outputs, "get output values from the network")
 				.def(self_ns::str(self_ns::self));
