@@ -31,9 +31,9 @@ def random_offset(min_dist, max_dist):
     return (x_offset, y_offset)
 
 def update_flag(mod):
-    x_offset, y_offset = random_offset(MIN_DIST, MAX_DIST)
-    x = mod.spawn_x[constants.OBJECT_TYPE_TEAM_0] + x_offset
-    y = mod.spawn_y[constants.OBJECT_TYPE_TEAM_0] + y_offset
+    #x_offset, y_offset = random_offset(MIN_DIST, MAX_DIST)
+    x = mod.spawn_x[constants.OBJECT_TYPE_TEAM_0] - MIN_DIST
+    y = mod.spawn_y[constants.OBJECT_TYPE_TEAM_0] - MIN_DIST
     log("update_flag", "New Flag Location {0},{1}".format(x, y))
     mod.change_flag([x, y, 0])
 
@@ -47,8 +47,8 @@ def log_stats(mod):
         distances.append(distance)
     minimum = min(distances)
     mean = sum(distances) / len(distances)
-    log("stats", "Minimum Distance: {0}".format(minimum))
-    log("stats", "Mean Distance: {0}".format(mean))
+    maximum = max(distances)
+    log("stats", "min: {0}, mean: {1}, max: {2}".format(minimum, mean, maximum))
 
 def train_flag_tick(dt):
     global flag_ticks, stats_ticks
