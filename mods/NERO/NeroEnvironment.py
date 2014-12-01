@@ -132,6 +132,8 @@ class NeroEnvironment(OpenNero.Environment):
         self.reward_weights[key] = value
         for team in self.teams:
             rtneat = OpenNero.get_ai("rtneat-%s" % team)
+            if not rtneat:
+                rtneat = OpenNero.get_ai("rtneatq-%s" % team)
             if rtneat:
                 rtneat.set_weight(constants.FITNESS_INDEX[key], value)
 
@@ -452,11 +454,13 @@ class NeroEnvironment(OpenNero.Environment):
 
     def maybe_spawn(self, agent):
         '''Spawn more agents if there are more to spawn.'''
-        if agent.ai != 'rtneat' or agent.group != 'Agent':
+        if agent.ai not in ('rtneat', 'rtneatq') or agent.group != 'Agent':
             return
 
         team = agent.get_team()
         rtneat = OpenNero.get_ai('rtneat-%s' % team)
+        if not rtneat:
+            rtneat = OpenNero.get_ai('rtneatq-%s' % team)
         if not rtneat or not rtneat.ready():
             return
 
@@ -619,6 +623,8 @@ class NeroEnvironment(OpenNero.Environment):
             return False
 
         rtneat = OpenNero.get_ai("rtneat-%s" % team)
+        if not rtneat:
+            rtneat = OpenNero.get_ai("rtneatq-%s" % team)
         orphaned = rtneat and not rtneat.has_organism(agent)
 
         return orphaned or dead or old

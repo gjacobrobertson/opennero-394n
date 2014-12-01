@@ -334,6 +334,8 @@ class NeroModule:
         self.environment.lifetime = value
         for team in constants.TEAMS:
             rtneat = OpenNero.get_ai("rtneat-%s" % team)
+            if not rtneat:
+                rtneat = OpenNero.get_ai("rtneatq-%s" % team)
             if rtneat:
                 rtneat.set_lifetime(value)
 
@@ -374,6 +376,8 @@ class NeroModule:
         """ advice for rtneat agents """
         # if there are rtneat agents in the environment, give them some advice
         rtneat = OpenNero.get_ai("rtneat-%s" % team)
+        if not rtneat:
+            rtneat = OpenNero.get_ai("rtneatq-%s" % team)
         if rtneat:
             try:
                 rtneat.advice = OpenNero.Advice(advice, rtneat, constants.N_SENSORS+1, constants.N_ACTIONS, True, self.sbounds_network, self.sbounds_advice)
