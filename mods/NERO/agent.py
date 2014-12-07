@@ -409,7 +409,7 @@ class RTNEATQAgent(RTNEATAgent):
 
     ai = "rtneatq"
 
-    def __init__(self, gamma=0.8, epsilon=0.1):
+    def __init__(self, gamma=0.8, epsilon=0.001):
         self.previous_sensors = None
         self.previous_candidate = None
         self.epsilon = epsilon

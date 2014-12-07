@@ -107,10 +107,10 @@ class NeroModule:
 #            "data/shapes/cube/Cube.xml",
 #            OpenNero.Vector3f(constants.XDIM/2, constants.YDIM/2, height),
 #            OpenNero.Vector3f(0, 0, 90),
-#            scale=OpenNero.Vector3f(constants.WIDTH, constants.YDIM / 4, constants.HEIGHT*2),
+#            scale=OpenNero.Vector3f(constants.WIDTH, 100, constants.HEIGHT*2),
 #            label="World Wall4",
 #            type=constants.OBJECT_TYPE_OBSTACLE)
-#
+
 #        # Add some trees
 #        for i in (0.25, 0.75):
 #            for j in (0.25, 0.75):
