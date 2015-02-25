@@ -477,7 +477,7 @@ class RTNEATQAgent(RTNEATAgent):
         normalized_reward = self.normalize_reward(reward)
         outputs = org.net.get_outputs()
         q_max = max([self.get_q(outputs, i) for i in range(constants.N_ACTION_CANDIDATES)])
-        target = normalized_reward + self.gamma * q_max
+        target = (1 - self.gamma) * normalized_reward + self.gamma * q_max
 
         previous_outputs = self.activate_network(org, self.previous_sensors)
         q_index = self.get_q_index(self.previous_candidate)
@@ -506,11 +506,8 @@ class RTNEATQAgent(RTNEATAgent):
         max_sum = 0
         environment = OpenNero.get_environment()
         for i, f in enumerate(constants.FITNESS_DIMENSIONS):
-            scale = constants.FITNESS_SCALE.get(f, 1.0) / 2.0
-            shift = 1.0
             weight = environment.reward_weights[f]
-            normalized_component = reward[i] / scale + shift
-            weighted_sum += weight * normalized_component
+            weighted_sum += weight * reward[i]
             min_sum += abs(weight) * -1.0
             max_sum += abs(weight)
         normalized_reward = weighted_sum

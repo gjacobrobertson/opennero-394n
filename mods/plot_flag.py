@@ -54,7 +54,7 @@ def main():
         fig, ax = plt.subplots()
     	ax.set_title(ai[d])
         ax.hold(True)
-	ax.plot(dmax, label='max')
+	#ax.plot(dmax, label='max')
         ax.plot(dmin, label='min')
         ax.plot(davg, label='avg')
         ax.legend()

@@ -390,22 +390,22 @@ class NeroEnvironment(OpenNero.Environment):
 
         R = dict((f, 0) for f in constants.FITNESS_DIMENSIONS)
 
-        R[constants.FITNESS_STAND_GROUND] = -abs(action[0])
+        R[constants.FITNESS_STAND_GROUND] = 1 - abs(action[0])
 
         friend = self.nearest(state.pose, friends)
         if friend:
             d = self.distance(self.get_state(friend).pose, state.pose)
-            R[constants.FITNESS_STICK_TOGETHER] = -d * d
+            R[constants.FITNESS_STICK_TOGETHER] = 1 / ((d * d / 50) + 1) 
 
         foe = self.nearest(state.pose, foes)
         if foe:
             d = self.distance(self.get_state(foe).pose, state.pose)
-            R[constants.FITNESS_APPROACH_ENEMY] = -d * d
+            R[constants.FITNESS_APPROACH_ENEMY] = 1 / ((d * d / 50) + 1)
 
         f = module.getMod().flag_loc
         if f:
             d = self.distance(state.pose, (f.x, f.y))
-            R[constants.FITNESS_APPROACH_FLAG] = -d * d
+            R[constants.FITNESS_APPROACH_FLAG] = 1 / ((d * d / 50) + 1)
 
 #        target = self.target(agent)
 #        if target is not None:
@@ -440,7 +440,7 @@ class NeroEnvironment(OpenNero.Environment):
             R[constants.FITNESS_HIT_TARGET] = 1
 
         damage = state.update_damage()
-        R[constants.FITNESS_AVOID_FIRE] = -damage
+        R[constants.FITNESS_AVOID_FIRE] = 0 if damage > 0 else 1
 
         if len(reward) == 1:
             for i, f in enumerate(constants.FITNESS_DIMENSIONS):
