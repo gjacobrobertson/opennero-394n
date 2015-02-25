@@ -7,7 +7,7 @@ echo $*
   --log $2 \
   --mod NERO \
   --modpath NERO:share/NERO:common \
-  --command "experiments.TrainFlag('$3')" &
+  --command "experiments.TrainFlag('$2')" &
 
 OPENNERO_PID=$!
 echo STARTED OpenNero with PID $OPENNERO_PID

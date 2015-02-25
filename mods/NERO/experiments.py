@@ -32,10 +32,11 @@ def random_offset(min_dist, max_dist):
 
 def update_flag(mod):
     #x_offset, y_offset = random_offset(MIN_DIST, MAX_DIST)
-    x = mod.spawn_x[constants.OBJECT_TYPE_TEAM_0] - MIN_DIST
-    y = mod.spawn_y[constants.OBJECT_TYPE_TEAM_0] - MIN_DIST
-    log("update_flag", "New Flag Location {0},{1}".format(x, y))
-    mod.change_flag([x, y, 0])
+    #x = mod.spawn_x[constants.OBJECT_TYPE_TEAM_0] - MIN_DIST
+    #y = mod.spawn_y[constants.OBJECT_TYPE_TEAM_0] - MIN_DIST
+    #log("update_flag", "New Flag Location {0},{1}".format(x, y))
+    #mod.change_flag([x, y, 0])
+    mod.change_flag([constants.XDIM/2.0, constants.YDIM*2.0/3.0, 0])
 
 def log_stats(mod):
     team = constants.OBJECT_TYPE_TEAM_0
@@ -67,7 +68,9 @@ def TrainFlag(ai):
     experiment_tick = train_flag_tick
     mod = NERO.module.getMod()
     mod.deploy(ai)
-    update_flag(mod)
+    mod.change_flag([constants.XDIM/2.0, constants.YDIM*2.0/3.0, 0])
+
+#    update_flag(mod)
     key = getattr(constants, "FITNESS_APPROACH_FLAG", None)
     mod.set_weight(key, 200)
 
